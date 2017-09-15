@@ -18,12 +18,14 @@ class Geo_LocationService extends BaseApplicationComponent
             "metro_code"=>"",
             "areacode"=>"",
             "timezone"=>"",
+            "country_code_cdn"=>"",
             "cached"=>false
         );
 
         $devMode = craft()->config->get('devMode');
 
-        $ip = craft()->request->getIpAddress();
+        // Use client (visitor) IP address provided by Cloudflare, if available
+        $ip = isset($_SERVER["CF-Connecting-IP"]) ? $_SERVER["CF-Connecting-IP"] : craft()->request->getIpAddress();
 
         $localIps = array("127.0.0.1","::1");
 
@@ -99,6 +101,8 @@ class Geo_LocationService extends BaseApplicationComponent
             "city"=>$city,
             "latitude"=>$data->location->latitude,
             "longitude"=>$data->location->longitude,
+            // Set country code provided by Cloudflare header, if available
+            "country_code_cdn"=>isset($_SERVER["HTTP_CF_IPCOUNTRY"]) ? $_SERVER["HTTP_CF_IPCOUNTRY"] : "",
             "cached"=>false
         );
 

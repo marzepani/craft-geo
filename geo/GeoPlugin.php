@@ -10,7 +10,7 @@ class GeoPlugin extends BasePlugin
 
     public function getVersion()
     {
-        return '1.4.1';
+        return '1.5.0';
     }
 
     public function getDeveloper()

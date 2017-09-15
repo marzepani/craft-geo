@@ -1,5 +1,9 @@
 # Changelog Craft CMS Geo Plugin
 
+Version 1.5.0 ([@marzepani](https://github.com/marzepani))
+
+* Added support for Cloudflare headers (country code and client IP)
+
 Version 1.4.1 ([@marzepani](https://github.com/marzepani))
 
 * Added IP format check to anonymizer
