@@ -92,8 +92,8 @@ class Geo_LocationService extends BaseApplicationComponent
 
         $data = array(
             "ip"=>$data->traits->ip_address,
-            "country_code"=>$data->country->iso_code,
-            "country_name"=>$data->country->names->en,
+            "country_code"=>isset($data->country) ? $data->country->iso_code : "",
+            "country_name"=>isset($data->country) ? $data->country->names->en : "",
             "region_name"=>$regionName,
             // Yes i know, i am not getting postcode etc yet.
             "city"=>$city,
@@ -133,25 +133,31 @@ class Geo_LocationService extends BaseApplicationComponent
         if (filter_var($ip, FILTER_VALIDATE_IP) !== false) {
             $segments = explode('.', $ip);
 
-            switch (strlen($segments[3])) {
-                case 1:
-                case 2:
-                    // Set last segment to zero
-                    $segments[3] = 0;
-                    break;
+            // Check if IP format can be processed
+            if (!array_key_exists(3, $segments)) {
+                // Skip and return
+                return $ip;
+            } else {
+                switch (strlen($segments[3])) {
+                    case 1:
+                    case 2:
+                        // Set last segment to zero
+                        $segments[3] = 0;
+                        break;
 
-                case 3:
-                    // Keep the first digit and set the last two to zero
-                    $ending = substr($segments[3], 0, 1);
-                    if (substr($segments[3], 1) == '00') {
-                        // Set two random digits if IP already ended with two zeros
-                        $ending .= rand(0, 9);
-                        $ending .= rand(0, 9);
-                    } else {
-                        $ending .= '00';
-                    }
-                    $segments[3] = $ending;
-                    break;
+                    case 3:
+                        // Keep the first digit and set the last two to zero
+                        $ending = substr($segments[3], 0, 1);
+                        if (substr($segments[3], 1) == '00') {
+                            // Set two random digits if IP already ended with two zeros
+                            $ending .= rand(0, 9);
+                            $ending .= rand(0, 9);
+                        } else {
+                            $ending .= '00';
+                        }
+                        $segments[3] = $ending;
+                        break;
+                }
             }
 
             $anonymizedIp = implode('.', $segments);
